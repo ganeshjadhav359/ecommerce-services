@@ -1,0 +1,15 @@
+# name of the eureka server
+spring:
+  application:
+    name: api-gateway
+
+# default port for eureka server
+server:
+  port: 8762
+
+# don't register eureka server service in eureka service register
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+

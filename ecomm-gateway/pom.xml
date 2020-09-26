@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ganeshjadhav359.ecommerce-microservices</groupId>
-	<artifactId>ecomm-eureka-server</artifactId>
+	<artifactId>ecomm-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ecomm-eureka-server</name>
-	<description>ecomm-eureka-server</description>
+	<name>ecomm-gateway</name>
+	<description>api-gateway-service</description>
 
 	<properties>
 		<java.version>11</java.version>
@@ -26,7 +26,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
 		</dependency>
 
 		<dependency>
