@@ -4,12 +4,9 @@ import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.validators.Al
 import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.validators.ConfirmPassword;
 import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.validators.ValidPassword;
 
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @ConfirmPassword
@@ -18,6 +15,7 @@ public class UserDto {
     @NotNull
     @NotEmpty(message ="It should not be empty")
     @AlphaNumericChars(message = "user name only contains alpha numeric values")
+    @Size(min = 6,max=20)
     private String userName;
 
     @NotNull
@@ -29,7 +27,7 @@ public class UserDto {
     private String confirmPassword;
 
     private boolean enabled;
-    
+
     private List<Integer> roleIds ;
 
     public String getConfirmPassword() {
@@ -71,5 +69,12 @@ public class UserDto {
 
     public void setRoleIds(List<Integer> roleIds) {
         this.roleIds = roleIds;
+    }
+
+    @Override
+    public String toString() {
+        return "User [username="+ getUserName()+" , password="+getPassword()+" , enabled="+isEnabled()
+                +" , confirmPassword="+getConfirmPassword()+" , roleIds="+getRoleIds().toString()+"]";
+
     }
 }
