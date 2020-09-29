@@ -5,13 +5,12 @@ import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.dao.UserRepos
 import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.dto.UserDto;
 import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.entities.Role;
 import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.entities.User;
+import com.ganeshjadhav359.ecommercemicroservices.ecommauthservice.error.RoleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service("userService")
 public class UserServiceImpl implements UserService{
@@ -32,6 +31,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public List<Role> findRolesByRoleIds(List<Integer> roleIds) {
+        List<Role> roles = new ArrayList<>();
+        for(Integer id : roleIds){
+            roles.add(roleRepository.findById(id).orElseThrow(()-> new RoleNotFoundException("provided role id "+id+" is not correct")));
+        }
+        return roles;
+    }
+
+    @Override
     public void createUserAccount(UserDto userDto) {
         User user = new User();
         user.setUserName(userDto.getUserName());
@@ -39,10 +47,10 @@ public class UserServiceImpl implements UserService{
         user.setEnabled(true);
         Set<Integer> roleIds = new HashSet<>();
         roleIds.add(1);  // user_role is assigned to all customers/users
-        if(user.getRoles()!=null){
+        if(userDto.getRoleIds()!=null){
           roleIds.addAll(userDto.getRoleIds());
         }
-        List<Role> roles = roleRepository.findAllById(roleIds);
+        List<Role> roles = findRolesByRoleIds(new ArrayList<>(roleIds));
         user.setRoles(roles);
         
         userRepository.save(user);

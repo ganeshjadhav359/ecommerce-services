@@ -19,7 +19,6 @@ import java.util.*;
 @ControllerAdvice
 public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
 
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid (
             MethodArgumentNotValidException ex,
@@ -33,10 +32,10 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
             errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
         }
-        ApiError apiError = new ApiError(ex.getLocalizedMessage(),errors,HttpStatus.BAD_REQUEST,new Date().toString());
+        ApiResponse apiResponse = new ApiResponse(ex.getLocalizedMessage(),errors,HttpStatus.BAD_REQUEST,new Date().toString());
                // new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
         return handleExceptionInternal(
-                ex, apiError, headers, apiError.getStatus(), request);
+                ex, apiResponse, headers, apiResponse.getStatus(), request);
     }
 
     @ExceptionHandler({ ConstraintViolationException.class })
@@ -49,15 +48,46 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
             errors.add(violation.getRootBeanClass().getName() + " " + violation.getPropertyPath() + ": " + violation.getMessage());
         }
 
-        final ApiError apiError = new ApiError(ex.getMessage(),errors,HttpStatus.BAD_REQUEST,new Date().toString());
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.BAD_REQUEST,new Date().toString());
+        return new ResponseEntity<Object>(apiResponse, new HttpHeaders(), apiResponse.getStatus());
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Malformed JSON request ";
         List<String> errors = new ArrayList<>(Collections.singletonList(error));
-        final ApiError apiError = new ApiError(ex.getMessage(),errors,HttpStatus.BAD_REQUEST,new Date().toString());
-        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+        final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.BAD_REQUEST,new Date().toString());
+        return new ResponseEntity<>(apiResponse, new HttpHeaders(), apiResponse.getStatus());
     }
+
+    @ExceptionHandler({UserNotFoundException.class})
+    public ResponseEntity<Object> handleUserNotFound(final RuntimeException ex, final WebRequest request) {
+        logger.error("404 Status Code", ex);
+        String error = "user does not exist with the provided username, please verify the username";
+        List<String> errors = new ArrayList<>(Collections.singletonList(error));
+        final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.NOT_FOUND,new Date().toString());
+        return handleExceptionInternal(
+                ex, apiResponse, new HttpHeaders(), apiResponse.getStatus(), request);
+    }
+    @ExceptionHandler({RoleNotFoundException.class})
+    public ResponseEntity<Object> handleRoleNotFound(final RuntimeException ex, final WebRequest request) {
+        logger.error("404 Status Code", ex);
+        String error = "Role could not be found for the provided id";
+        List<String> errors = new ArrayList<>(Collections.singletonList(error));
+        final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.NOT_FOUND,new Date().toString());
+        return handleExceptionInternal(
+                ex, apiResponse, new HttpHeaders(), apiResponse.getStatus(), request);
+    }
+
+    // 409
+    @ExceptionHandler({UserAlreadyExistException.class})
+    public ResponseEntity<Object> handleUserAlreadyExist(final RuntimeException ex, final WebRequest request) {
+        logger.error("409 Status Code", ex);
+        String error = "user already exists with the provided username, please try different username";
+        List<String> errors = new ArrayList<>(Collections.singletonList(error));
+        final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.CONFLICT,new Date().toString());
+        return handleExceptionInternal(
+                ex, apiResponse, new HttpHeaders(), apiResponse.getStatus(), request);
+    }
+    
 }

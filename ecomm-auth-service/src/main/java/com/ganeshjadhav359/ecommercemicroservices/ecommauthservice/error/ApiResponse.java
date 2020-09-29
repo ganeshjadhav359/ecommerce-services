@@ -4,14 +4,14 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-public class ApiError {
+public class ApiResponse {
     
     private String message;
     private List<String> errors;
     private HttpStatus status;
     private String timestamp;
 
-    public ApiError(String message, List<String> errors, HttpStatus status, String timestamp) {
+    public ApiResponse(String message, List<String> errors, HttpStatus status, String timestamp) {
         this.message = message;
         this.errors = errors;
         this.status = status;
