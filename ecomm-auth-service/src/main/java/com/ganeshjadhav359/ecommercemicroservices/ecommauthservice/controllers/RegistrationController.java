@@ -29,7 +29,9 @@ public class RegistrationController {
     public String hello(){
         return "hello";
     }
+
     @PostMapping("/registrations")
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse createAccount(@RequestBody @Valid UserDto userDto){
         //System.out.println(userDto);
         User user = userService.findUserByUsername(userDto.getUserName());
