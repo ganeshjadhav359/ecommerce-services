@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User  user = userService.findUserByUsername(s);
         if(user==null)
-                throw new UserNotFoundException("Username: "+s+" is invalid");
+                throw new UsernameNotFoundException("Username: "+s+" is invalid");
 
         return new SecurityUser(user);
     }

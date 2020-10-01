@@ -55,6 +55,10 @@ public class User {
         this.id = id;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getUserName() {
         return userName;
     }

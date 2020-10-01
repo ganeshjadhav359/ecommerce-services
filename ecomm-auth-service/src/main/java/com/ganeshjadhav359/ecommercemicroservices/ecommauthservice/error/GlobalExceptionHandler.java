@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -86,6 +87,15 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         String error = "user already exists with the provided username, please try different username";
         List<String> errors = new ArrayList<>(Collections.singletonList(error));
         final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.CONFLICT,new Date().toString());
+        return handleExceptionInternal(
+                ex, apiResponse, new HttpHeaders(), apiResponse.getStatus(), request);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<Object> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex, final WebRequest request) {
+        String error = "user does not exist with the provided username, please verify the username";
+        List<String> errors = new ArrayList<>(Collections.singletonList(error));
+        final ApiResponse apiResponse = new ApiResponse(ex.getMessage(),errors,HttpStatus.NOT_FOUND,new Date().toString());
         return handleExceptionInternal(
                 ex, apiResponse, new HttpHeaders(), apiResponse.getStatus(), request);
     }

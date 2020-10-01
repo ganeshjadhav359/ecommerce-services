@@ -23,6 +23,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
 
     @Autowired
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+    @Autowired
     public WebSecurityConfig(UserService userService) {
         this.userService = userService;
     }
@@ -35,6 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager()))
                 .sessionManagement()
